@@ -18,7 +18,7 @@
 // Definitions
 
 /**
- * @brief Settings.
+ * @brief AHRS algorithm settings.
  */
 typedef struct {
     FusionConvention convention;
@@ -30,7 +30,8 @@ typedef struct {
 } FusionAhrsSettings;
 
 /**
- * @brief AHRS structure. All members are private.
+ * @brief AHRS algorithm structure. Structure members are used internally and
+ * must not be accessed by the application.
  */
 typedef struct {
     FusionAhrsSettings settings;
@@ -51,7 +52,7 @@ typedef struct {
 } FusionAhrs;
 
 /**
- * @brief Internal states.
+ * @brief AHRS algorithm internal states.
  */
 typedef struct {
     float accelerationError;
@@ -63,7 +64,7 @@ typedef struct {
 } FusionAhrsInternalStates;
 
 /**
- * @brief Flags.
+ * @brief AHRS algorithm flags.
  */
 typedef struct {
     bool initialising;

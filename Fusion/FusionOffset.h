@@ -1,7 +1,8 @@
 /**
  * @file FusionOffset.h
  * @author Seb Madgwick
- * @brief Run-time estimation and compensation of gyroscope offset.
+ * @brief Gyroscope offset correction algorithm for run-time calibration of the
+ * gyroscope offset.
  */
 
 #ifndef FUSION_OFFSET_H
@@ -16,7 +17,8 @@
 // Definitions
 
 /**
- * @brief Offset structure. All members are private.
+ * @brief Gyroscope offset algorithm structure. Structure members are used
+ * internally and must not be accessed by the application.
  */
 typedef struct {
     float filterCoefficient;

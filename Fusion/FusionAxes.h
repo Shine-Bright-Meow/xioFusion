@@ -1,7 +1,7 @@
 /**
  * @file FusionAxes.h
  * @author Seb Madgwick
- * @brief Remaps the sensor axes to the body frame.
+ * @brief Swaps sensor axes for alignment with the body axes.
  */
 
 #ifndef FUSION_AXES_H
@@ -16,10 +16,10 @@
 // Definitions
 
 /**
- * @brief Alignment of the sensor axes relative to the body frame. For example,
- * if the body X axis is aligned with the sensor Y axis and the body Y axis is
- * aligned with sensor X axis but pointing the opposite direction, then
- * alignment is +Y-X+Z.
+ * @brief Axes alignment describing the sensor axes relative to the body axes.
+ * For example, if the body X axis is aligned with the sensor Y axis and the
+ * body Y axis is aligned with sensor X axis but pointing the opposite direction
+ * then alignment is +Y-X+Z.
  */
 typedef enum {
     FusionAxesAlignmentPXPYPZ, /* +X+Y+Z */
@@ -52,10 +52,10 @@ typedef enum {
 // Inline functions
 
 /**
- * @brief Remaps the sensor axes to the body frame.
- * @param sensor Sensor.
- * @param alignment Alignment.
- * @return Sensor remapped to the body frame.
+ * @brief Swaps sensor axes for alignment with the body axes.
+ * @param sensor Sensor axes.
+ * @param alignment Axes alignment.
+ * @return Sensor axes aligned with the body axes.
  */
 static inline FusionVector FusionAxesSwap(const FusionVector sensor, const FusionAxesAlignment alignment) {
     FusionVector result;
