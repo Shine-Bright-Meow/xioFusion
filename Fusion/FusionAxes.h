@@ -1,11 +1,11 @@
 /**
- * @file FusionRemap.h
+ * @file FusionAxes.h
  * @author Seb Madgwick
  * @brief Remaps the sensor axes to the body frame.
  */
 
-#ifndef FUSION_REMAP_H
-#define FUSION_REMAP_H
+#ifndef FUSION_AXES_H
+#define FUSION_AXES_H
 
 //------------------------------------------------------------------------------
 // Includes
@@ -18,35 +18,35 @@
 /**
  * @brief Alignment of the sensor axes relative to the body frame. For example,
  * if the body X axis is aligned with the sensor Y axis and the body Y axis is
- * aligned with the sensor X axis but pointing the opposite direction, then
+ * aligned with sensor X axis but pointing the opposite direction, then
  * alignment is +Y-X+Z.
  */
 typedef enum {
-    FusionRemapAlignmentPXPYPZ, /* +X+Y+Z */
-    FusionRemapAlignmentPXNZPY, /* +X-Z+Y */
-    FusionRemapAlignmentPXNYNZ, /* +X-Y-Z */
-    FusionRemapAlignmentPXPZNY, /* +X+Z-Y */
-    FusionRemapAlignmentNXPYNZ, /* -X+Y-Z */
-    FusionRemapAlignmentNXPZPY, /* -X+Z+Y */
-    FusionRemapAlignmentNXNYPZ, /* -X-Y+Z */
-    FusionRemapAlignmentNXNZNY, /* -X-Z-Y */
-    FusionRemapAlignmentPYNXPZ, /* +Y-X+Z */
-    FusionRemapAlignmentPYNZNX, /* +Y-Z-X */
-    FusionRemapAlignmentPYPXNZ, /* +Y+X-Z */
-    FusionRemapAlignmentPYPZPX, /* +Y+Z+X */
-    FusionRemapAlignmentNYPXPZ, /* -Y+X+Z */
-    FusionRemapAlignmentNYNZPX, /* -Y-Z+X */
-    FusionRemapAlignmentNYNXNZ, /* -Y-X-Z */
-    FusionRemapAlignmentNYPZNX, /* -Y+Z-X */
-    FusionRemapAlignmentPZPYNX, /* +Z+Y-X */
-    FusionRemapAlignmentPZPXPY, /* +Z+X+Y */
-    FusionRemapAlignmentPZNYPX, /* +Z-Y+X */
-    FusionRemapAlignmentPZNXNY, /* +Z-X-Y */
-    FusionRemapAlignmentNZPYPX, /* -Z+Y+X */
-    FusionRemapAlignmentNZNXPY, /* -Z-X+Y */
-    FusionRemapAlignmentNZNYNX, /* -Z-Y-X */
-    FusionRemapAlignmentNZPXNY, /* -Z+X-Y */
-} FusionRemapAlignment;
+    FusionAxesAlignmentPXPYPZ, /* +X+Y+Z */
+    FusionAxesAlignmentPXNZPY, /* +X-Z+Y */
+    FusionAxesAlignmentPXNYNZ, /* +X-Y-Z */
+    FusionAxesAlignmentPXPZNY, /* +X+Z-Y */
+    FusionAxesAlignmentNXPYNZ, /* -X+Y-Z */
+    FusionAxesAlignmentNXPZPY, /* -X+Z+Y */
+    FusionAxesAlignmentNXNYPZ, /* -X-Y+Z */
+    FusionAxesAlignmentNXNZNY, /* -X-Z-Y */
+    FusionAxesAlignmentPYNXPZ, /* +Y-X+Z */
+    FusionAxesAlignmentPYNZNX, /* +Y-Z-X */
+    FusionAxesAlignmentPYPXNZ, /* +Y+X-Z */
+    FusionAxesAlignmentPYPZPX, /* +Y+Z+X */
+    FusionAxesAlignmentNYPXPZ, /* -Y+X+Z */
+    FusionAxesAlignmentNYNZPX, /* -Y-Z+X */
+    FusionAxesAlignmentNYNXNZ, /* -Y-X-Z */
+    FusionAxesAlignmentNYPZNX, /* -Y+Z-X */
+    FusionAxesAlignmentPZPYNX, /* +Z+Y-X */
+    FusionAxesAlignmentPZPXPY, /* +Z+X+Y */
+    FusionAxesAlignmentPZNYPX, /* +Z-Y+X */
+    FusionAxesAlignmentPZNXNY, /* +Z-X-Y */
+    FusionAxesAlignmentNZPYPX, /* -Z+Y+X */
+    FusionAxesAlignmentNZNXPY, /* -Z-X+Y */
+    FusionAxesAlignmentNZNYNX, /* -Z-Y-X */
+    FusionAxesAlignmentNZPXNY, /* -Z+X-Y */
+} FusionAxesAlignment;
 
 //------------------------------------------------------------------------------
 // Inline functions
@@ -57,122 +57,122 @@ typedef enum {
  * @param alignment Alignment.
  * @return Sensor remapped to the body frame.
  */
-static inline FusionVector FusionRemap(const FusionVector sensor, const FusionRemapAlignment alignment) {
+static inline FusionVector FusionAxesSwap(const FusionVector sensor, const FusionAxesAlignment alignment) {
     FusionVector result;
     switch (alignment) {
-        case FusionRemapAlignmentPXPYPZ:
+        case FusionAxesAlignmentPXPYPZ:
             break;
-        case FusionRemapAlignmentPXNZPY:
+        case FusionAxesAlignmentPXNZPY:
             result.axis.x = +sensor.axis.x;
             result.axis.y = -sensor.axis.z;
             result.axis.z = +sensor.axis.y;
             return result;
-        case FusionRemapAlignmentPXNYNZ:
+        case FusionAxesAlignmentPXNYNZ:
             result.axis.x = +sensor.axis.x;
             result.axis.y = -sensor.axis.y;
             result.axis.z = -sensor.axis.z;
             return result;
-        case FusionRemapAlignmentPXPZNY:
+        case FusionAxesAlignmentPXPZNY:
             result.axis.x = +sensor.axis.x;
             result.axis.y = +sensor.axis.z;
             result.axis.z = -sensor.axis.y;
             return result;
-        case FusionRemapAlignmentNXPYNZ:
+        case FusionAxesAlignmentNXPYNZ:
             result.axis.x = -sensor.axis.x;
             result.axis.y = +sensor.axis.y;
             result.axis.z = -sensor.axis.z;
             return result;
-        case FusionRemapAlignmentNXPZPY:
+        case FusionAxesAlignmentNXPZPY:
             result.axis.x = -sensor.axis.x;
             result.axis.y = +sensor.axis.z;
             result.axis.z = +sensor.axis.y;
             return result;
-        case FusionRemapAlignmentNXNYPZ:
+        case FusionAxesAlignmentNXNYPZ:
             result.axis.x = -sensor.axis.x;
             result.axis.y = -sensor.axis.y;
             result.axis.z = +sensor.axis.z;
             return result;
-        case FusionRemapAlignmentNXNZNY:
+        case FusionAxesAlignmentNXNZNY:
             result.axis.x = -sensor.axis.x;
             result.axis.y = -sensor.axis.z;
             result.axis.z = -sensor.axis.y;
             return result;
-        case FusionRemapAlignmentPYNXPZ:
+        case FusionAxesAlignmentPYNXPZ:
             result.axis.x = +sensor.axis.y;
             result.axis.y = -sensor.axis.x;
             result.axis.z = +sensor.axis.z;
             return result;
-        case FusionRemapAlignmentPYNZNX:
+        case FusionAxesAlignmentPYNZNX:
             result.axis.x = +sensor.axis.y;
             result.axis.y = -sensor.axis.z;
             result.axis.z = -sensor.axis.x;
             return result;
-        case FusionRemapAlignmentPYPXNZ:
+        case FusionAxesAlignmentPYPXNZ:
             result.axis.x = +sensor.axis.y;
             result.axis.y = +sensor.axis.x;
             result.axis.z = -sensor.axis.z;
             return result;
-        case FusionRemapAlignmentPYPZPX:
+        case FusionAxesAlignmentPYPZPX:
             result.axis.x = +sensor.axis.y;
             result.axis.y = +sensor.axis.z;
             result.axis.z = +sensor.axis.x;
             return result;
-        case FusionRemapAlignmentNYPXPZ:
+        case FusionAxesAlignmentNYPXPZ:
             result.axis.x = -sensor.axis.y;
             result.axis.y = +sensor.axis.x;
             result.axis.z = +sensor.axis.z;
             return result;
-        case FusionRemapAlignmentNYNZPX:
+        case FusionAxesAlignmentNYNZPX:
             result.axis.x = -sensor.axis.y;
             result.axis.y = -sensor.axis.z;
             result.axis.z = +sensor.axis.x;
             return result;
-        case FusionRemapAlignmentNYNXNZ:
+        case FusionAxesAlignmentNYNXNZ:
             result.axis.x = -sensor.axis.y;
             result.axis.y = -sensor.axis.x;
             result.axis.z = -sensor.axis.z;
             return result;
-        case FusionRemapAlignmentNYPZNX:
+        case FusionAxesAlignmentNYPZNX:
             result.axis.x = -sensor.axis.y;
             result.axis.y = +sensor.axis.z;
             result.axis.z = -sensor.axis.x;
             return result;
-        case FusionRemapAlignmentPZPYNX:
+        case FusionAxesAlignmentPZPYNX:
             result.axis.x = +sensor.axis.z;
             result.axis.y = +sensor.axis.y;
             result.axis.z = -sensor.axis.x;
             return result;
-        case FusionRemapAlignmentPZPXPY:
+        case FusionAxesAlignmentPZPXPY:
             result.axis.x = +sensor.axis.z;
             result.axis.y = +sensor.axis.x;
             result.axis.z = +sensor.axis.y;
             return result;
-        case FusionRemapAlignmentPZNYPX:
+        case FusionAxesAlignmentPZNYPX:
             result.axis.x = +sensor.axis.z;
             result.axis.y = -sensor.axis.y;
             result.axis.z = +sensor.axis.x;
             return result;
-        case FusionRemapAlignmentPZNXNY:
+        case FusionAxesAlignmentPZNXNY:
             result.axis.x = +sensor.axis.z;
             result.axis.y = -sensor.axis.x;
             result.axis.z = -sensor.axis.y;
             return result;
-        case FusionRemapAlignmentNZPYPX:
+        case FusionAxesAlignmentNZPYPX:
             result.axis.x = -sensor.axis.z;
             result.axis.y = +sensor.axis.y;
             result.axis.z = +sensor.axis.x;
             return result;
-        case FusionRemapAlignmentNZNXPY:
+        case FusionAxesAlignmentNZNXPY:
             result.axis.x = -sensor.axis.z;
             result.axis.y = -sensor.axis.x;
             result.axis.z = +sensor.axis.y;
             return result;
-        case FusionRemapAlignmentNZNYNX:
+        case FusionAxesAlignmentNZNYNX:
             result.axis.x = -sensor.axis.z;
             result.axis.y = -sensor.axis.y;
             result.axis.z = -sensor.axis.x;
             return result;
-        case FusionRemapAlignmentNZPXNY:
+        case FusionAxesAlignmentNZPXNY:
             result.axis.x = -sensor.axis.z;
             result.axis.y = +sensor.axis.x;
             result.axis.z = -sensor.axis.y;
