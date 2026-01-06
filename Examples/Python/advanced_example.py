@@ -1,8 +1,7 @@
-import sys
-
 import imufusion
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
 
 # Import sensor data
 data = np.genfromtxt("sensor_data.csv", delimiter=",", skip_header=1)
@@ -18,7 +17,7 @@ magnetometer = data[:, 7:10]
 offset = imufusion.Offset(sample_rate)
 ahrs = imufusion.Ahrs()
 
-ahrs.settings = imufusion.AhrsSettings(
+ahrs.settings = imufusion.Settings(
     imufusion.CONVENTION_NWU,  # convention
     0.5,  # gain
     2000,  # gyroscope range
