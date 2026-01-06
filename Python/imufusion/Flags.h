@@ -2,6 +2,7 @@
 #define FLAGS_H
 
 #include "../../Fusion/Fusion.h"
+#include "Helpers.h"
 #include <Python.h>
 
 typedef struct {
@@ -14,19 +15,19 @@ static void flags_free(Flags *self) {
 }
 
 static PyObject *flags_get_initialising(Flags *self) {
-    return PyBool_FromLong((long) self->flags.initialising);
+    return build_bool(self->flags.initialising);
 }
 
 static PyObject *flags_get_angular_rate_recovery(Flags *self) {
-    return PyBool_FromLong((long) self->flags.angularRateRecovery);
+    return build_bool(self->flags.angularRateRecovery);
 }
 
 static PyObject *flags_get_acceleration_recovery(Flags *self) {
-    return PyBool_FromLong((long) self->flags.accelerationRecovery);
+    return build_bool(self->flags.accelerationRecovery);
 }
 
 static PyObject *flags_get_magnetic_recovery(Flags *self) {
-    return PyBool_FromLong((long) self->flags.magneticRecovery);
+    return build_bool(self->flags.magneticRecovery);
 }
 
 static PyGetSetDef flags_get_set[] = {

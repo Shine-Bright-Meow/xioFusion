@@ -2,6 +2,7 @@
 #define INTERNAL_STATES_H
 
 #include "../../Fusion/Fusion.h"
+#include "Helpers.h"
 #include <Python.h>
 
 typedef struct {
@@ -14,27 +15,27 @@ static void internal_states_free(InternalStates *self) {
 }
 
 static PyObject *internal_states_get_acceleration_error(InternalStates *self) {
-    return PyFloat_FromDouble((double) self->internal_states.accelerationError);
+    return Py_BuildValue("f", self->internal_states.accelerationError);
 }
 
 static PyObject *internal_states_get_accelerometer_ignored(InternalStates *self) {
-    return PyBool_FromLong((long) self->internal_states.accelerometerIgnored);
+    return build_bool(self->internal_states.accelerometerIgnored);
 }
 
 static PyObject *internal_states_get_acceleration_recovery_trigger(InternalStates *self) {
-    return PyFloat_FromDouble((double) self->internal_states.accelerationRecoveryTrigger);
+    return Py_BuildValue("f", self->internal_states.accelerationRecoveryTrigger);
 }
 
 static PyObject *internal_states_get_magnetic_error(InternalStates *self) {
-    return PyFloat_FromDouble((double) self->internal_states.magneticError);
+    return Py_BuildValue("f", self->internal_states.magneticError);
 }
 
 static PyObject *internal_states_get_magnetometer_ignored(InternalStates *self) {
-    return PyBool_FromLong((long) self->internal_states.magnetometerIgnored);
+    return build_bool(self->internal_states.magnetometerIgnored);
 }
 
 static PyObject *internal_states_get_magnetic_recovery_trigger(InternalStates *self) {
-    return PyFloat_FromDouble((double) self->internal_states.magneticRecoveryTrigger);
+    return Py_BuildValue("f", self->internal_states.magneticRecoveryTrigger);
 }
 
 static PyGetSetDef internal_states_get_set[] = {
