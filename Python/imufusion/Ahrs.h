@@ -3,12 +3,12 @@
 
 #include "../../Fusion/Fusion.h"
 #include "Flags.h"
+#include "Helpers.h"
 #include "InternalStates.h"
-#include "NpArray.h"
 #include <Python.h>
 #include "Quaternion.h"
 #include "Settings.h"
-#include <stdio.h>
+#include <stdlib.h>
 
 typedef struct {
     PyObject_HEAD
@@ -58,21 +58,33 @@ static int ahrs_set_quaternion(Ahrs *self, PyObject *value, void *closure) {
 }
 
 static PyObject *ahrs_get_gravity(Ahrs *self) {
-    const FusionVector gravity = FusionAhrsGetGravity(&self->ahrs);
+    FusionVector *const gravity = malloc(sizeof(FusionVector));
+    *gravity = FusionAhrsGetGravity(&self->ahrs);
 
-    return np_array_1x3_from(gravity.array);
+    const npy_intp dims[] = {3};
+    PyObject *array = PyArray_SimpleNewFromData(1, dims, NPY_FLOAT, gravity->array);
+    PyArray_ENABLEFLAGS((PyArrayObject *) array, NPY_ARRAY_OWNDATA);
+    return array;
 }
 
 static PyObject *ahrs_get_linear_acceleration(Ahrs *self) {
-    const FusionVector linear_acceleration = FusionAhrsGetLinearAcceleration(&self->ahrs);
+    FusionVector *const linear_acceleration = malloc(sizeof(FusionVector));
+    *linear_acceleration = FusionAhrsGetLinearAcceleration(&self->ahrs);
 
-    return np_array_1x3_from(linear_acceleration.array);
+    const npy_intp dims[] = {3};
+    PyObject *array = PyArray_SimpleNewFromData(1, dims, NPY_FLOAT, linear_acceleration->array);
+    PyArray_ENABLEFLAGS((PyArrayObject *) array, NPY_ARRAY_OWNDATA);
+    return array;
 }
 
 static PyObject *ahrs_get_earth_acceleration(Ahrs *self) {
-    const FusionVector earth_acceleration = FusionAhrsGetEarthAcceleration(&self->ahrs);
+    FusionVector *const earth_acceleration = malloc(sizeof(FusionVector));
+    *earth_acceleration = FusionAhrsGetEarthAcceleration(&self->ahrs);
 
-    return np_array_1x3_from(earth_acceleration.array);
+    const npy_intp dims[] = {3};
+    PyObject *array = PyArray_SimpleNewFromData(1, dims, NPY_FLOAT, earth_acceleration->array);
+    PyArray_ENABLEFLAGS((PyArrayObject *) array, NPY_ARRAY_OWNDATA);
+    return array;
 }
 
 static PyObject *ahrs_get_internal_states(Ahrs *self) {
@@ -91,85 +103,95 @@ static PyObject *ahrs_reset(Ahrs *self, PyObject *args) {
 }
 
 static PyObject *ahrs_update(Ahrs *self, PyObject *args) {
-    PyObject *gyroscope_object;
-    PyObject *accelerometer_object;
-    PyObject *magnetometer_object;
+    PyArrayObject *gyroscope_array;
+    PyArrayObject *accelerometer_array;
+    PyArrayObject *magnetometer_array;
     float delta_time;
 
-    if (PyArg_ParseTuple(args, "OOOf", &gyroscope_object, &accelerometer_object, &magnetometer_object, &delta_time) == 0) {
+    if (PyArg_ParseTuple(args, "O!O!O!f", &PyArray_Type, &gyroscope_array, &PyArray_Type, &accelerometer_array, &PyArray_Type, &magnetometer_array, &delta_time) == 0) {
         return NULL;
     }
 
-    FusionVector gyroscope;
+    FusionVector gyroscope_vector;
+    FusionVector accelerometer_vector;
+    FusionVector magnetometer_vector;
 
-    if (np_array_1x3_to(gyroscope.array, gyroscope_object) != 0) {
+    const char *error = parse_array(gyroscope_vector.array, gyroscope_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionVector accelerometer;
-
-    if (np_array_1x3_to(accelerometer.array, accelerometer_object) != 0) {
+    error = parse_array(accelerometer_vector.array, accelerometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionVector magnetometer;
-
-    if (np_array_1x3_to(magnetometer.array, magnetometer_object) != 0) {
+    error = parse_array(magnetometer_vector.array, magnetometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionAhrsUpdate(&self->ahrs, gyroscope, accelerometer, magnetometer, delta_time);
+    FusionAhrsUpdate(&self->ahrs, gyroscope_vector, accelerometer_vector, magnetometer_vector, delta_time);
     Py_RETURN_NONE;
 }
 
 static PyObject *ahrs_update_no_magnetometer(Ahrs *self, PyObject *args) {
-    PyObject *gyroscope_object;
-    PyObject *accelerometer_object;
+    PyArrayObject *gyroscope_array;
+    PyArrayObject *accelerometer_array;
     float delta_time;
 
-    if (PyArg_ParseTuple(args, "OOf", &gyroscope_object, &accelerometer_object, &delta_time) == 0) {
+    if (PyArg_ParseTuple(args, "O!O!f", &PyArray_Type, &gyroscope_array, &PyArray_Type, &accelerometer_array, &delta_time) == 0) {
         return NULL;
     }
 
-    FusionVector gyroscope;
+    FusionVector gyroscope_vector;
+    FusionVector accelerometer_vector;
 
-    if (np_array_1x3_to(gyroscope.array, gyroscope_object) != 0) {
+    const char *error = parse_array(gyroscope_vector.array, gyroscope_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionVector accelerometer;
-
-    if (np_array_1x3_to(accelerometer.array, accelerometer_object) != 0) {
+    error = parse_array(accelerometer_vector.array, accelerometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionAhrsUpdateNoMagnetometer(&self->ahrs, gyroscope, accelerometer, delta_time);
+    FusionAhrsUpdateNoMagnetometer(&self->ahrs, gyroscope_vector, accelerometer_vector, delta_time);
     Py_RETURN_NONE;
 }
 
 static PyObject *ahrs_update_external_heading(Ahrs *self, PyObject *args) {
-    PyObject *gyroscope_object;
-    PyObject *accelerometer_object;
+    PyArrayObject *gyroscope_array;
+    PyArrayObject *accelerometer_array;
     float heading;
     float delta_time;
 
-    if (PyArg_ParseTuple(args, "OOff", &gyroscope_object, &accelerometer_object, &heading, &delta_time) == 0) {
+    if (PyArg_ParseTuple(args, "O!O!ff", &PyArray_Type, &gyroscope_array, &PyArray_Type, &accelerometer_array, &heading, &delta_time) == 0) {
         return NULL;
     }
 
-    FusionVector gyroscope;
+    FusionVector gyroscope_vector;
+    FusionVector accelerometer_vector;
 
-    if (np_array_1x3_to(gyroscope.array, gyroscope_object) != 0) {
+    const char *error = parse_array(gyroscope_vector.array, gyroscope_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionVector accelerometer;
-
-    if (np_array_1x3_to(accelerometer.array, accelerometer_object) != 0) {
+    error = parse_array(accelerometer_vector.array, accelerometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionAhrsUpdateExternalHeading(&self->ahrs, gyroscope, accelerometer, heading, delta_time);
+    FusionAhrsUpdateExternalHeading(&self->ahrs, gyroscope_vector, accelerometer_vector, heading, delta_time);
     Py_RETURN_NONE;
 }
 

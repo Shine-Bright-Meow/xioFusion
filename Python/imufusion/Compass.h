@@ -2,33 +2,36 @@
 #define COMPASS_H
 
 #include "../../Fusion/Fusion.h"
-#include "NpArray.h"
+#include "Helpers.h"
+#include <numpy/arrayobject.h>
 #include <Python.h>
+#include <stdlib.h>
 
 static PyObject *compass(PyObject *self, PyObject *args) {
     FusionConvention convention;
-    PyObject *accelerometer_object;
-    PyObject *magnetometer_object;
+    PyArrayObject *accelerometer_array;
+    PyArrayObject *magnetometer_array;
 
-    if (PyArg_ParseTuple(args, "iOO", &convention, &accelerometer_object, &magnetometer_object) == 0) {
+    if (PyArg_ParseTuple(args, "iO!O!", &convention, &PyArray_Type, &accelerometer_array, &PyArray_Type, &magnetometer_array) == 0) {
         return NULL;
     }
 
-    FusionVector accelerometer;
+    FusionVector accelerometer_vector;
+    FusionVector magnetometer_vector;
 
-    if (np_array_1x3_to(accelerometer.array, accelerometer_object) != 0) {
+    const char *error = parse_array(accelerometer_vector.array, accelerometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    FusionVector magnetometer;
-
-    if (np_array_1x3_to(magnetometer.array, magnetometer_object) != 0) {
+    error = parse_array(magnetometer_vector.array, magnetometer_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    const float heading = FusionCompass(convention, accelerometer, magnetometer);
-
-    return PyFloat_FromDouble((double) heading);
+    return PyFloat_FromDouble((double) FusionCompass(convention, accelerometer_vector, magnetometer_vector));
 }
 
 static PyMethodDef compass_methods[] = {

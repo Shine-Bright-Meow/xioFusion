@@ -3,6 +3,7 @@
 #include "Compass.h"
 #include "Flags.h"
 #include "InternalStates.h"
+#include <numpy/arrayobject.h>
 #include "Offset.h"
 #include <Python.h>
 #include "Quaternion.h"

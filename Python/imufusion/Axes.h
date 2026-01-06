@@ -2,26 +2,34 @@
 #define AXES_H
 
 #include "../../Fusion/Fusion.h"
-#include "NpArray.h"
+#include "Helpers.h"
+#include <numpy/arrayobject.h>
 #include <Python.h>
+#include <stdlib.h>
 
 static PyObject *axes_swap(PyObject *self, PyObject *args) {
-    PyObject *sensor_object;
+    PyArrayObject *input_array;
     int alignment;
 
-    if (PyArg_ParseTuple(args, "Oi", &sensor_object, &alignment) == 0) {
+    if (PyArg_ParseTuple(args, "O!i", &PyArray_Type, &input_array, &alignment) == 0) {
         return NULL;
     }
 
-    FusionVector sensor;
+    FusionVector input_vector;
 
-    if (np_array_1x3_to(sensor.array, sensor_object) != 0) {
+    const char *error = parse_array(input_vector.array, input_array, 3);
+    if (error != NULL) {
+        PyErr_SetString(PyExc_TypeError, error);
         return NULL;
     }
 
-    const FusionVector aligned_sensor = FusionAxesSwap(sensor, (FusionAxesAlignment) alignment);
+    FusionVector *const output_vector = malloc(sizeof(FusionVector));
+    *output_vector = FusionAxesSwap(input_vector, (FusionAxesAlignment) alignment);
 
-    return np_array_1x3_from(aligned_sensor.array);
+    const npy_intp dims[] = {3};
+    PyObject *output_array = PyArray_SimpleNewFromData(1, dims, NPY_FLOAT, output_vector->array);
+    PyArray_ENABLEFLAGS((PyArrayObject *) output_array, NPY_ARRAY_OWNDATA);
+    return output_array;
 }
 
 static PyMethodDef axes_methods[] = {
