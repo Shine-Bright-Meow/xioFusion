@@ -42,7 +42,6 @@ static PyTypeObject ahrs_flags_object = {
     .tp_name = "imufusion.AhrsFlags",
     .tp_basicsize = sizeof(AhrsFlags),
     .tp_dealloc = (destructor) ahrs_flags_free,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_getset = ahrs_flags_get_set,
 };
 

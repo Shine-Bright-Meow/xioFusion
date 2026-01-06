@@ -52,7 +52,6 @@ static PyTypeObject ahrs_internal_states_object = {
     .tp_name = "imufusion.AhrsInternalStates",
     .tp_basicsize = sizeof(AhrsInternalStates),
     .tp_dealloc = (destructor) ahrs_internal_states_free,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
     .tp_getset = ahrs_internal_states_get_set,
 };
 
