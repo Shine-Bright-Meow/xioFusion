@@ -6,6 +6,7 @@
 #include "InternalStates.h"
 #include "NpArray.h"
 #include <Python.h>
+#include "Quaternion.h"
 #include "Settings.h"
 #include <stdio.h>
 
@@ -42,18 +43,17 @@ static int ahrs_set_settings(Ahrs *self, PyObject *value, void *closure) {
 
 static PyObject *ahrs_get_quaternion(Ahrs *self) {
     const FusionQuaternion quaternion = FusionAhrsGetQuaternion(&self->ahrs);
-
-    return np_array_1x4_from(quaternion.array);
+    return quaternion_from(&quaternion);
 }
 
 static int ahrs_set_quaternion(Ahrs *self, PyObject *value, void *closure) {
-    FusionQuaternion quaternion;
-
-    if (np_array_1x4_to(quaternion.array, value) != 0) {
+    if (PyObject_IsInstance(value, (PyObject *) &quaternion_object) == false) {
+        static char string[64];
+        snprintf(string, sizeof(string), "Value type is not %s", quaternion_object.tp_name);
+        PyErr_SetString(PyExc_TypeError, string);
         return -1;
     }
-
-    FusionAhrsSetQuaternion(&self->ahrs, quaternion);
+    FusionAhrsSetQuaternion(&self->ahrs, ((Quaternion *) value)->quaternion);
     return 0;
 }
 

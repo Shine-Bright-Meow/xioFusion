@@ -38,7 +38,7 @@ for index in range(len(timestamp)):
 
     ahrs.update(gyroscope[index], accelerometer[index], magnetometer[index], delta_time[index])
 
-    euler[index] = imufusion.quaternion_to_euler(ahrs.quaternion)
+    euler[index] = ahrs.quaternion.to_euler()
 
     ahrs_internal_states = ahrs.internal_states
     internal_states[index] = np.array(
