@@ -9,7 +9,7 @@ typedef struct {
     FusionAhrsSettings settings;
 } AhrsSettings;
 
-static PyObject *ahrs_settings_new(PyTypeObject *subtype, PyObject *args, PyObject *kwds) {
+static PyObject *ahrs_settings_new(PyTypeObject *subtype, PyObject *args, PyObject *keywords) {
     AhrsSettings *const self = (AhrsSettings *) subtype->tp_alloc(subtype, 0);
 
     if (self == NULL) {
