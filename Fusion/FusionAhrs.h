@@ -73,11 +73,6 @@ typedef struct {
 } FusionAhrsFlags;
 
 //------------------------------------------------------------------------------
-// Variable declarations
-
-extern const FusionAhrsSettings fusionAhrsDefaultSettings;
-
-//------------------------------------------------------------------------------
 // Function declarations
 
 void FusionAhrsInitialise(FusionAhrs *const ahrs);

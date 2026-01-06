@@ -16,25 +16,13 @@ static PyObject *ahrs_settings_new(PyTypeObject *subtype, PyObject *args, PyObje
         return NULL;
     }
 
-    self->settings = fusionAhrsDefaultSettings;
-
-    static char *kwlist[] = {
-        "convention",
-        "gain",
-        "gyroscope_range",
-        "acceleration_rejection",
-        "magnetic_rejection",
-        "recovery_trigger_period",
-        NULL, /* sentinel */
-    };
-
-    if (PyArg_ParseTupleAndKeywords(args, kwds, "|iffffI", kwlist,
-                                    &self->settings.convention,
-                                    &self->settings.gain,
-                                    &self->settings.gyroscopeRange,
-                                    &self->settings.accelerationRejection,
-                                    &self->settings.magneticRejection,
-                                    &self->settings.recoveryTriggerPeriod) == 0) {
+    if (PyArg_ParseTuple(args, "iffffI",
+                         &self->settings.convention,
+                         &self->settings.gain,
+                         &self->settings.gyroscopeRange,
+                         &self->settings.accelerationRejection,
+                         &self->settings.magneticRejection,
+                         &self->settings.recoveryTriggerPeriod) == 0) {
         Py_DECREF(self);
         return NULL;
     }
